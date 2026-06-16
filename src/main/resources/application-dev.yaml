@@ -1,0 +1,40 @@
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
+      max-request-size: 5MB
+
+  datasource:
+    url: jdbc:sqlite:C:/KioskQueue_Data/kiosk_db.sqlite
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.community.dialect.SQLiteDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+kiosk:
+  default:
+    ui:
+      name: "Tân Hưng Hà Kiosk"
+      logo-url: "/uploads/logo.ico"
+      customer-color-primary: "#b91c1c"
+      customer-color-secondary: "#fde047"
+      customer-color-background: "#ffffff"
+      customer-color-text-highlight: "#dc2626"
+      viewer-color-primary: "#b91c1c"
+      viewer-color-secondary: "#fca5a5"
+      viewer-color-background: "#e5e7eb"
+      viewer-color-text-highlight: "#dc2626"
+    reset-config:
+      max-edits-per-month: 10
+
+  session:
+    cookie-max-age-in-seconds: 600
+    cache-ttl-hours: 1
+
+logging:
+  level:
+    com.thh.kiosk.queue: DEBUG

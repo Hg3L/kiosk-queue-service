@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: kiosk-queue-service
+  profiles:
+    active: prod
+  threads:
+    virtual:
+      enabled: true
+
+
+kiosk:
+  session:
+    cookie-name: "KIOSK_QUEUE_SESSION_ID"
+    cache-max-size: 5000
