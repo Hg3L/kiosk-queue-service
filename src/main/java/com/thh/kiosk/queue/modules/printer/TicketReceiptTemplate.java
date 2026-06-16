@@ -27,36 +27,36 @@ public class TicketReceiptTemplate implements Printable {
         g.setColor(Color.BLACK);
 
         int pageW = (int) pageFormat.getImageableWidth();
-        int y = 20;
+        int y = 8;
 
-        y = drawWrapped(g, data.title(), boldFont(11), y, pageW);
-        y += 8;
-
-        y = drawCentered(g, data.ticketCode(), monoFont(48), y, pageW);
-        y += 6;
-
-        y = drawWrapped(g, data.counterName(), plainFont(9), y, pageW);
+        y = drawWrapped(g, data.title(), boldFont(9), y, pageW);
         y += 4;
 
-        y = drawCentered(g, formatNow(), plainFont(9), y, pageW);
-        y += 14;
+        y = drawCentered(g, data.ticketCode(), monoFont(20), y, pageW);
+        y += 3;
+
+        y = drawWrapped(g, data.counterName(), plainFont(8), y, pageW);
+        y += 2;
+
+        y = drawCentered(g, formatNow(), plainFont(8), y, pageW);
+        y += 6;
 
         return PAGE_EXISTS;
     }
 
     public int estimatedHeightPt() {
-        int lineH11 = fontHeight(boldFont(11));
-        int lineH48 = fontHeight(monoFont(48));
-        int lineH9  = fontHeight(plainFont(9));
+        int lineH9  = fontHeight(boldFont(9));
+        int lineH30 = fontHeight(monoFont(30));
+        int lineH8  = fontHeight(plainFont(8));
 
-        int titleLines = estimateLines(data.title(), boldFont(11), 180);
-        int counterLines = estimateLines(data.counterName(), plainFont(9), 180);
+        int titleLines   = estimateLines(data.title(), boldFont(9), 180);
+        int counterLines = estimateLines(data.counterName(), plainFont(8), 180);
 
-        int y = 20;
-        y += lineH11 * titleLines + 8;
-        y += lineH48 + 6;
-        y += lineH9  * counterLines + 4;
-        y += lineH9  + 14;
+        int y = 8;
+        y += lineH9  * titleLines + 4;
+        y += lineH30 + 3;
+        y += lineH8  * counterLines + 2;
+        y += lineH8  + 6;
         return y;
     }
 
@@ -64,7 +64,7 @@ public class TicketReceiptTemplate implements Printable {
         g.setFont(font);
         FontMetrics fm = g.getFontMetrics();
         int x = (pageW - fm.stringWidth(text)) / 2;
-        g.drawString(text, Math.max(MARGIN, x), y);
+        g.drawString(text, Math.max(MARGIN, x), y + fm.getAscent());
         return y + fm.getHeight();
     }
 
