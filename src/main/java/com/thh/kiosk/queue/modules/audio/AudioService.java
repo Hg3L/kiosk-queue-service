@@ -82,8 +82,8 @@ public class AudioService {
 
         for (char c : ticketCode.toCharArray()) {
             if (Character.isLetter(c)) {
-                prefixCode = String.valueOf(c).toUpperCase();
-                list.add("audio/alphabet/" + prefixCode + ".wav");
+                prefixCode = String.valueOf(c);
+                //list.add("audio/alphabet/" + prefixCode + ".wav");
             } else if (Character.isDigit(c)) {
                 list.add("audio/number/" + c + ".wav");
             }

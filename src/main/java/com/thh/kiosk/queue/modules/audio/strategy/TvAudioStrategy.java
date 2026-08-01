@@ -1,16 +1,12 @@
 package com.thh.kiosk.queue.modules.audio.strategy;
 
 import com.thh.kiosk.queue.core.constant.WebSocketConstants;
-import com.thh.kiosk.queue.core.model.enums.CommonStatus;
-import com.thh.kiosk.queue.modules.system.log.AbstractLogWriter;
-import com.thh.kiosk.queue.modules.system.log.LogActionEnum;
 import com.thh.kiosk.queue.modules.system.log.LogTag;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

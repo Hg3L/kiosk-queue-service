@@ -9,8 +9,6 @@ import com.thh.kiosk.queue.modules.counter.dto.CreateCounterRequest;
 import com.thh.kiosk.queue.modules.counter.dto.SelectCounterRequest;
 import com.thh.kiosk.queue.modules.counter.dto.UpdateCounterRequest;
 import com.thh.kiosk.queue.modules.shift.ShiftRepository;
-import com.thh.kiosk.queue.modules.system.log.AbstractLogWriter;
-import com.thh.kiosk.queue.modules.system.log.LogActionEnum;
 import com.thh.kiosk.queue.modules.system.log.LogTag;
 import com.thh.kiosk.queue.modules.system.log.ServiceLogTag;
 
@@ -50,7 +48,6 @@ public class CounterService {
     }
 
     public void changeCounter(Long id) {
-        requireInShift();
         counterCacheManager.deleteCache(id);
         CounterEntity entity = getCounterEntityById(id);
         String oldIp = entity.getIp();
@@ -64,7 +61,6 @@ public class CounterService {
     }
 
     public void selectCounter(Long id, SelectCounterRequest request) {
-        requireInShift();
         if (!counterCacheManager.addCache(id, request)) {
             log.warn("Counter id {} is already in cache",
                     id

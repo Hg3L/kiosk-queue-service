@@ -144,7 +144,7 @@ public class ReportExportService {
             Row row = sheet.createRow(rowIdx++);
 
             Cell cell0 = row.createCell(1);
-            cell0.setCellValue(ticket.getTicketCode());
+            cell0.setCellValue(ticket.getTicketCode().replaceFirst("^[A-Z]+", ""));
             cell0.setCellStyle(styles.dataStyle);
 
             Cell cell1 = row.createCell(2);

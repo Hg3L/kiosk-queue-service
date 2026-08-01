@@ -1,5 +1,7 @@
 package com.thh.kiosk.queue.infrastructure.database;
 
+import static com.thh.kiosk.queue.core.constant.PathConstants.IMG_UPLOAD_DIR;
+
 import com.thh.kiosk.queue.config.properties.KioskDefault;
 import com.thh.kiosk.queue.core.model.enums.CommonStatus;
 import com.thh.kiosk.queue.modules.counter.CounterEntity;
@@ -11,8 +13,15 @@ import com.thh.kiosk.queue.modules.setting.SettingKey;
 import com.thh.kiosk.queue.modules.setting.SettingRepository;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,12 +43,42 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     private final ResetTimeRepository resetTimeRepository;
 
+    private final ResourceLoader resourceLoader;
+
     @Override
     public void run(String... args) throws Exception {
         log.info("Initializing database with default settings...");
+        ensurePhysicalDefaultAssets();
         initDefaultSetting();
         mockCounterData();
         log.info("Database initialization completed.");
+    }
+
+    private void ensurePhysicalDefaultAssets() {
+        try {
+            if (Files.notExists(IMG_UPLOAD_DIR)) {
+                Files.createDirectories(IMG_UPLOAD_DIR);
+                log.info("Created upload directory at: {}", IMG_UPLOAD_DIR.toAbsolutePath());
+            }
+
+            String logoUrl = kioskDefault.logoUrl();
+            String filename = logoUrl.substring(logoUrl.lastIndexOf("/") + 1);
+            Path targetPath = IMG_UPLOAD_DIR.resolve(filename);
+
+            if (Files.notExists(targetPath)) {
+                Resource resource = resourceLoader.getResource("classpath:/static/uploads/" + filename);
+                if (resource.exists()) {
+                    try (InputStream is = resource.getInputStream()) {
+                        Files.copy(is, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                        log.info("Successfully extracted default asset to physical drive: {}", targetPath.toAbsolutePath());
+                    }
+                } else {
+                    log.warn("Default asset not found in classpath: {}", resource.getDescription());
+                }
+            }
+        } catch (IOException e) {
+            log.error("Critical error while ensuring physical default assets", e);
+        }
     }
 
     private void initDefaultSetting() {

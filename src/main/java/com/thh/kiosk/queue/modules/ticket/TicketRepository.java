@@ -36,7 +36,6 @@ public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
     @Query("UPDATE TicketEntity t SET t.isDeleted = true, t.deletedAt = :now WHERE t.isDeleted = false AND t.createdAt < :startOfDay")
     int softDeleteAllTicketsBefore(@Param("startOfDay") Instant startOfDay, @Param("now") Instant now);
 
-    // Lấy toàn bộ vé trong ngày trước mốc Reset (Hibernate tự động loại bỏ các vé đã bị Soft Delete)
     @Query("SELECT t FROM TicketEntity t WHERE t.createdAt < :boundary ORDER BY t.createdAt ASC")
     List<TicketEntity> findTicketsForDailyReport(@Param("boundary") Instant boundary);
 

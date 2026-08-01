@@ -1,8 +1,6 @@
 package com.thh.kiosk.queue.modules.audio.strategy;
 
 import com.thh.kiosk.queue.infrastructure.hardware.HardwareAudioScanner;
-import com.thh.kiosk.queue.modules.system.log.AbstractLogWriter;
-import com.thh.kiosk.queue.modules.system.log.LogActionEnum;
 import com.thh.kiosk.queue.modules.system.log.LogTag;
 
 import org.springframework.core.io.ClassPathResource;
@@ -23,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class KioskAudioStrategy
-        extends AbstractLogWriter
         implements AudioPlaybackStrategy {
     private final HardwareAudioScanner audioScanner;
 
@@ -92,23 +89,9 @@ public class KioskAudioStrategy
             log.info("{} Audio call ticket {} in Kiosk has been played",
                     LogTag.AUDIO_FALLBACK,
                     ticketCode);
-            logInfo(
-                    LogActionEnum.KIOSK_AUDIO_PLAY.buildParam(
-                            null,
-                            Map.of(
-                                    "ticket_code", ticketCode,
-                                    "playlist", playlist
-                            )
-                    )
-            );
         } catch (Exception e) {
             log.error("{} Can't connect to audio device", LogTag.AUDIO_FALLBACK, e);
-            logError(LogActionEnum.AUDIO_DEVICE_NOT_FOUND.buildParam(
-                    null,
-                    Map.of(
-                            "error_message", e.getMessage()
-                    )
-            ));
+
         } finally {
             if (line != null) {
                 line.drain();
@@ -134,13 +117,6 @@ public class KioskAudioStrategy
             return AudioSystem.getAudioInputStream(bufferedStream);
         } catch (Exception e) {
             log.warn("Can't find audio file: {}", relativePath);
-            logError(LogActionEnum.AUDIO_FILE_NOT_FOUND.buildParam(
-                    null,
-                    Map.of(
-                            "file_path", relativePath,
-                            "error_message", e.getMessage()
-                    )
-            ));
             return null;
         }
     }

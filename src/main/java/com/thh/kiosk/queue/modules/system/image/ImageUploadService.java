@@ -1,5 +1,7 @@
 package com.thh.kiosk.queue.modules.system.image;
 
+import static com.thh.kiosk.queue.core.constant.PathConstants.IMG_UPLOAD_DIR;
+
 import com.thh.kiosk.queue.core.exception.BusinessException;
 import com.thh.kiosk.queue.core.exception.ErrorCode;
 import com.thh.kiosk.queue.modules.system.log.LogTag;
@@ -23,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ImageUploadService {
 
-    private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads");
     private static final String PREFIX_NAME = "custom-logo-";
     private static final long MAX_RAW_SIZE = 2 * 1024 * 1024;
     private static final int MAX_WIDTH = 512;
@@ -57,9 +58,9 @@ public class ImageUploadService {
         }
 
         try {
-            if (Files.notExists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-                log.info("{} Folder created at: {}", LogTag.IMAGE, uploadDir.toAbsolutePath());
+            if (Files.notExists(IMG_UPLOAD_DIR)) {
+                Files.createDirectories(IMG_UPLOAD_DIR);
+                log.info("{} Folder created at: {}", LogTag.IMAGE, IMG_UPLOAD_DIR.toAbsolutePath());
             }
 
             cleanUpOldLogos();
@@ -71,12 +72,12 @@ public class ImageUploadService {
 
             if (extension.equals(".svg") || extension.equals(".ico")) {
                 newFilename = PREFIX_NAME + uuidPart + extension;
-                destination = uploadDir.resolve(newFilename);
+                destination = IMG_UPLOAD_DIR.resolve(newFilename);
                 Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
                 log.info("{} Saved RAW logo at: {}", LogTag.IMAGE, destination.toAbsolutePath());
             } else {
                 newFilename = PREFIX_NAME + uuidPart + ".png";
-                destination = uploadDir.resolve(newFilename);
+                destination = IMG_UPLOAD_DIR.resolve(newFilename);
 
                 Thumbnails.of(file.getInputStream())
                         .size(MAX_WIDTH, MAX_HEIGHT)
@@ -96,7 +97,7 @@ public class ImageUploadService {
     }
 
     private void cleanUpOldLogos() {
-        try (Stream<Path> files = Files.list(uploadDir)) {
+        try (Stream<Path> files = Files.list(IMG_UPLOAD_DIR)) {
             files.filter(p -> p.getFileName().toString().startsWith(PREFIX_NAME))
                     .forEach(p -> {
                         try {

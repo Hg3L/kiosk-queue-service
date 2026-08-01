@@ -20,17 +20,11 @@ public interface ShiftRepository extends JpaRepository<ShiftEntity, Long> {
                                 @Param("excludeId") Long excludeId);
 
     @Query("""
-            SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
-            FROM ShiftEntity s
-            WHERE
-            (
-                :time BETWEEN s.startTime AND s.endTime
-            )
-            OR
-            (
-                    :time >= s.startTime
-                    OR :time <= s.endTime
-            )
-    """)
+                SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+                FROM ShiftEntity s
+                WHERE s.startTime <= :time
+                  AND :time < s.endTime
+                  AND s.startTime < s.endTime
+            """)
     boolean existsShiftByWorkingTime(@Param("time") LocalTime time);
 }

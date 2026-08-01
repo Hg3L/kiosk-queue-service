@@ -15,18 +15,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ThermalPrinterController {
 
-    private final PrintService printService;
+    private final PrinterService printerService;
 
     @PostMapping(EndpointConstants.TEST_PATH)
     public ApiResponse<Void> testPrint() {
-        printService.testPrint();
+        printerService.testPrint(PrinterType.ESC_POS);
         return ApiResponse.success();
     }
 
     @GetMapping(EndpointConstants.HEALTH_PATH)
     public ApiResponse<Object> thermalPrinterStatus(){
         return ApiResponse.builder()
-                .data(printService.getPrinterStatus())
+                .data(printerService.getPrinterStatus())
                 .build();
     }
 }

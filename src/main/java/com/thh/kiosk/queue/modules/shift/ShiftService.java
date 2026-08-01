@@ -60,7 +60,7 @@ public class ShiftService {
     public void updateShift(Long id, ShiftRequest request) {
         ShiftEntity entity = getShiftById(id);
 
-        checkIfShiftIsCurrentlyActiveAndThrow(entity);
+        //checkIfShiftIsCurrentlyActiveAndThrow(entity);
 
         validateShiftLogic(request.startTime(), request.endTime(), id);
 
@@ -75,7 +75,7 @@ public class ShiftService {
     public void deleteShift(Long id) {
         ShiftEntity entity = getShiftById(id);
 
-        checkIfShiftIsCurrentlyActiveAndThrow(entity);
+        //checkIfShiftIsCurrentlyActiveAndThrow(entity);
 
         shiftRepository.delete(entity);
         log.info("{} Shift hard-deleted: ID {}",LogTag.SHIFT, id);

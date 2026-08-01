@@ -6,8 +6,6 @@ import com.thh.kiosk.queue.core.model.enums.CommonStatus;
 import com.thh.kiosk.queue.modules.audio.AudioService;
 import com.thh.kiosk.queue.modules.counter.KioskWebSocketService;
 import com.thh.kiosk.queue.modules.counter.CounterRepository;
-import com.thh.kiosk.queue.modules.system.log.AbstractLogWriter;
-import com.thh.kiosk.queue.modules.system.log.LogActionEnum;
 import com.thh.kiosk.queue.modules.system.log.LogTag;
 import com.thh.kiosk.queue.modules.system.log.ServiceLogTag;
 import com.thh.kiosk.queue.modules.ticket.*;
@@ -15,7 +13,6 @@ import com.thh.kiosk.queue.modules.ticket.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;

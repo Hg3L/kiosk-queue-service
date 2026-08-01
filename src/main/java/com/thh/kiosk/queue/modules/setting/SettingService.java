@@ -5,6 +5,8 @@ import com.thh.kiosk.queue.core.exception.BusinessException;
 import com.thh.kiosk.queue.core.exception.ErrorCode;
 import com.thh.kiosk.queue.modules.system.image.ImageUploadService;
 import com.thh.kiosk.queue.modules.system.log.LogTag;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,9 +94,14 @@ public class SettingService {
             log.info("{} Setting updated. Cache invalidated: {}", LogTag.SETTING, entity.getKey());
         });
 
-        messagingTemplate.convertAndSend(
-                WebSocketConstants.SETTING_DESTINATION,
-                WebSocketConstants.Payload.RELOAD_REQUIRED.name()
-        );
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                messagingTemplate.convertAndSend(
+                        WebSocketConstants.SETTING_DESTINATION,
+                        WebSocketConstants.Payload.RELOAD_REQUIRED.name()
+                );
+            }
+        });
     }
 }

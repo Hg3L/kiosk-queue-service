@@ -159,7 +159,6 @@ public class DashboardService {
         ResetTimeEntity config = resetTimeRepository.findById(1L).orElse(new ResetTimeEntity());
         String exportPath = config.getExportPath();
 
-        // Kích hoạt Engine tạo Excel
         reportExportService.exportDailyReport(ticketsToExport, exportPath, date);
     }
 }

@@ -20,6 +20,12 @@ public class AudioController {
         return ApiResponse.success();
     }
 
+    @PostMapping(EndpointConstants.TEST_PATH + "/call/{ticketCode}")
+    public ApiResponse<Void> testAudioDeviceDynamic(@PathVariable String ticketCode) {
+        audioService.playTicketCall(ticketCode);
+        return ApiResponse.success();
+    }
+
     @GetMapping(EndpointConstants.HEALTH_PATH)
     public ApiResponse<Object> audioStatus(){
         return ApiResponse.builder()

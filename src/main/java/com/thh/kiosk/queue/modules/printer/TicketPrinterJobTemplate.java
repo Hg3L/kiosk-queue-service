@@ -1,5 +1,6 @@
 package com.thh.kiosk.queue.modules.printer;
 
+import com.thh.kiosk.queue.modules.counter.CounterNameUtils;
 import com.thh.kiosk.queue.modules.printer.dto.TicketPrintData;
 
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
-public class TicketReceiptTemplate implements Printable {
+public class TicketPrinterJobTemplate implements Printable {
 
     private final TicketPrintData data;
     private static final int MARGIN = 4;
@@ -22,20 +23,27 @@ public class TicketReceiptTemplate implements Printable {
         if (pageIndex > 0) return NO_SUCH_PAGE;
 
         Graphics2D g = (Graphics2D) graphics;
-        g.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+
+        double paperWidth = pageFormat.getPaper().getWidth();
+        double imageableWidth = pageFormat.getImageableWidth();
+        double compensation = Math.max(0, (paperWidth - imageableWidth) / 2 - pageFormat.getImageableX());
+
+        g.translate(pageFormat.getImageableX() + compensation, pageFormat.getImageableY());
         setupHints(g);
         g.setColor(Color.BLACK);
 
-        int pageW = (int) pageFormat.getImageableWidth();
+        int pageW = (int) imageableWidth;
         int y = 8;
 
         y = drawWrapped(g, data.title(), boldFont(9), y, pageW);
         y += 4;
 
-        y = drawCentered(g, data.ticketCode(), monoFont(20), y, pageW);
+        String formattedTicketCode = data.ticketCode().replaceFirst("^[A-Z]+", "");
+        y = drawCentered(g, formattedTicketCode, monoFont(20), y, pageW);
         y += 3;
 
-        y = drawWrapped(g, data.counterName(), plainFont(8), y, pageW);
+        String fullCounterName = CounterNameUtils.generateCounterName(data.ticketCode(), data.counterName());
+        y = drawWrapped(g, fullCounterName, plainFont(8), y, pageW);
         y += 2;
 
         y = drawCentered(g, formatNow(), plainFont(8), y, pageW);
@@ -45,18 +53,18 @@ public class TicketReceiptTemplate implements Printable {
     }
 
     public int estimatedHeightPt() {
-        int lineH9  = fontHeight(boldFont(9));
+        int lineH9 = fontHeight(boldFont(9));
         int lineH30 = fontHeight(monoFont(30));
-        int lineH8  = fontHeight(plainFont(8));
+        int lineH8 = fontHeight(plainFont(8));
 
-        int titleLines   = estimateLines(data.title(), boldFont(9), 180);
+        int titleLines = estimateLines(data.title(), boldFont(9), 180);
         int counterLines = estimateLines(data.counterName(), plainFont(8), 180);
 
         int y = 8;
-        y += lineH9  * titleLines + 4;
+        y += lineH9 * titleLines + 4;
         y += lineH30 + 3;
-        y += lineH8  * counterLines + 2;
-        y += lineH8  + 6;
+        y += lineH8 * counterLines + 2;
+        y += lineH8 + 6;
         return y;
     }
 
@@ -109,13 +117,21 @@ public class TicketReceiptTemplate implements Printable {
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    private Font boldFont(int size)  { return new Font("Arial", Font.BOLD, size); }
-    private Font plainFont(int size) { return new Font("Arial", Font.PLAIN, size); }
-    private Font monoFont(int size)  { return new Font("Courier New", Font.BOLD, size); }
+    private Font boldFont(int size) {
+        return new Font("Arial", Font.BOLD, size);
+    }
+
+    private Font plainFont(int size) {
+        return new Font("Arial", Font.PLAIN, size);
+    }
+
+    private Font monoFont(int size) {
+        return new Font("Courier New", Font.BOLD, size);
+    }
 
     private void setupHints(Graphics2D g) {
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,      RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING,         RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     }
 }
